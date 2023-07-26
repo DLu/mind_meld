@@ -18,3 +18,11 @@
 .golden {
   color: yellow;
 }
+
+#scores {
+  padding-top: 25px;
+}
+
+#scores tr td {
+  padding-bottom: 25px;
+}
