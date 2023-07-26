@@ -1,0 +1,33 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+      - id: detect-private-key
+      - id: destroyed-symlinks
+      - id: check-symlinks
+      - id: check-case-conflict
+    rev: v4.4.0
+  - repo: https://github.com/codespell-project/codespell
+    hooks:
+      - id: codespell
+        args:
+          - --write-changes
+    rev: v2.2.5
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-lxml
+    hooks:
+      - id: forbid-html-img-without-alt-text
+      - id: forbid-non-std-html-attributes
+      - id: html-tags-blacklist
+      - id: html-attributes-blacklist
+    rev: v1.1.0
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    hooks:
+      - id: prettier
+    rev: v2.7.1
+ci:
+  autoupdate_schedule: quarterly
