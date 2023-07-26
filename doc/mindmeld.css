@@ -1,0 +1,20 @@
+#my_root {
+  width: 60%;
+}
+#answer_section {
+  width: 30%;
+  float: left;
+  margin-left: 10%;
+  display: none;
+}
+
+#scores_section {
+  width: 40%;
+  float: right;
+  margin-right: 10%;
+  display: none;
+}
+
+.golden {
+  color: yellow;
+}

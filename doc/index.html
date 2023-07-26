@@ -1,0 +1,336 @@
+<head>
+  <title>Mind Meld</title>
+  <link rel="stylesheet" href="oldmac.css" />
+  <link rel="stylesheet" href="mindmeld.css" />
+</head>
+
+<!--
+    Timestamp	Name	Things (each on their own line)
+7/20/2023 13:40:27	David	"R2D2
+C3PO
+WALLE"
+7/20/2023 13:40:44	Elise	"C3PO
+WALLE
+BB8"
+7/20/2023 13:41:21	Lizzie	"Captain Barnacles
+R2-D2
+C3PO"
+7/20/2023 13:41:21	Maggie	"Captain Barnacles
+R2-D2
+C3PO"
+-->
+
+<script>
+  var answers = {};
+  var merge_lookup = {};
+  var merges = {};
+  var FULL_MELD_BONUS = 10;
+
+  // https://gist.github.com/rakeden/508ca124fabe97eba6d5734f2efcea32
+  function CSVToArray(strData, strDelimiter) {
+    // Check to see if the delimiter is defined. If not,
+    // then default to comma.
+    strDelimiter = strDelimiter || ",";
+
+    // Create a regular expression to parse the CSV values.
+    var objPattern = new RegExp(
+      // Delimiters.
+      "(\\" +
+        strDelimiter +
+        "|\\r?\\n|\\r|^)" +
+        // Quoted fields.
+        '(?:"([^"]*(?:""[^"]*)*)"|' +
+        // Standard fields.
+        '([^"\\' +
+        strDelimiter +
+        "\\r\\n]*))",
+      "gi"
+    );
+
+    // Create an array to hold our data. Give the array
+    // a default empty first row.
+    var arrData = [[]];
+
+    // Create an array to hold our individual pattern
+    // matching groups.
+    var arrMatches = null;
+
+    // Keep looping over the regular expression matches
+    // until we can no longer find a match.
+    while ((arrMatches = objPattern.exec(strData))) {
+      // Get the delimiter that was found.
+      var strMatchedDelimiter = arrMatches[1];
+
+      // Check to see if the given delimiter has a length
+      // (is not the start of string) and if it matches
+      // field delimiter. If id does not, then we know
+      // that this delimiter is a row delimiter.
+      if (strMatchedDelimiter.length && strMatchedDelimiter !== strDelimiter) {
+        // Since we have reached a new row of data,
+        // add an empty row to our data array.
+        arrData.push([]);
+      }
+
+      var strMatchedValue;
+
+      // Now that we have our delimiter out of the way,
+      // let's check to see which kind of value we
+      // captured (quoted or unquoted).
+      if (arrMatches[2]) {
+        // We found a quoted value. When we capture
+        // this value, unescape any double quotes.
+        strMatchedValue = arrMatches[2].replace(new RegExp('""', "g"), '"');
+      } else {
+        // We found a non-quoted value.
+        strMatchedValue = arrMatches[3];
+      }
+
+      // Now that we have our value string, let's add
+      // it to the data array.
+      arrData[arrData.length - 1].push(strMatchedValue);
+    }
+
+    // Return the parsed data.
+    return arrData;
+  }
+
+  function score() {
+    document.getElementById("answer_section").style.display = "block";
+    var table_el = document.getElementById("answers");
+    table_el.innerHTML = "";
+    var players = Object.keys(answers);
+    var n_players = players.length;
+
+    var counts = {};
+    var translated_answers = {};
+    for (var name in answers) {
+      var things = answers[name];
+      var translated_things = [];
+
+      for (var thing of things) {
+        if (merge_lookup[thing]) {
+          thing = merge_lookup[thing];
+        }
+        translated_things.push(thing);
+
+        if (counts[thing] != null) {
+          counts[thing] += 1;
+        } else {
+          counts[thing] = 1;
+        }
+      }
+
+      translated_answers[name] = translated_things;
+    }
+
+    var keys = Object.keys(counts);
+    keys.sort();
+
+    for (var key of keys) {
+      var row_el = document.createElement("tr");
+      table_el.appendChild(row_el);
+
+      if (counts[key] == n_players) {
+        row_el.classList.add("golden");
+      }
+
+      var cell0 = document.createElement("td");
+      row_el.appendChild(cell0);
+
+      if (!merges[key]) {
+        var check = document.createElement("input");
+        check.setAttribute("type", "checkbox");
+        check.setAttribute("value", key);
+        cell0.appendChild(check);
+      }
+
+      var cell1 = document.createElement("td");
+      row_el.appendChild(cell1);
+      if (merges[key]) {
+        cell1.innerHTML = merges[key]["values"].join("/");
+      } else {
+        cell1.innerHTML = key;
+      }
+
+      var cell2 = document.createElement("td");
+      row_el.appendChild(cell2);
+      cell2.innerHTML = counts[key];
+
+      if (merges[key]) {
+        var cell3 = document.createElement("td");
+        row_el.appendChild(cell3);
+        var button = document.createElement("button");
+        button.classList.add("command_button");
+        button.onclick = function () {
+          unmerge(key);
+        };
+        button.innerHTML = "Split";
+        cell3.appendChild(button);
+      }
+    }
+
+    var full_meld = {};
+
+    for (var i = 0; i < n_players; i++) {
+      for (var j = i + 1; j < n_players; j++) {
+        var player_i = players[i];
+        var player_j = players[j];
+
+        var things_i = translated_answers[player_i];
+        var things_j = translated_answers[player_j];
+        var ij_match = 0;
+        for (var thing of things_i) {
+          if (things_j.includes(thing)) {
+            ij_match += 1;
+          } else {
+            break;
+          }
+        }
+
+        if (things_i.length == things_j.length && things_i.length == ij_match) {
+          full_meld[player_i] = true;
+          full_meld[player_j] = true;
+        }
+      }
+    }
+
+    var scores_el = document.getElementById("scores");
+    scores_el.innerHTML = "";
+    document.getElementById("scores_section").style.display = "block";
+
+    for (var name in answers) {
+      var row_el = document.createElement("tr");
+      scores_el.appendChild(row_el);
+
+      var cell_el = document.createElement("td");
+      row_el.appendChild(cell_el);
+      cell_el.innerHTML = name;
+
+      var cell2 = document.createElement("td");
+      row_el.appendChild(cell2);
+
+      var p = [];
+      var total = 0;
+      for (var thing of answers[name]) {
+        var tname = thing;
+        if (merge_lookup[thing]) {
+          thing = merge_lookup[thing];
+        }
+
+        if (counts[thing] == 1) continue;
+        s = counts[thing] + " points for " + tname;
+        total += counts[thing];
+        p.push(s);
+      }
+
+      if (full_meld[name]) {
+        total += FULL_MELD_BONUS;
+        p.push('<span class="golden">' + FULL_MELD_BONUS + " points for Full Meld</span>");
+      }
+      cell2.innerHTML = p.join("<br>");
+
+      var cell3 = document.createElement("td");
+      row_el.appendChild(cell3);
+      cell3.innerHTML = total;
+    }
+  }
+
+  function parse() {
+    var text_el = document.getElementById("input");
+    var results = CSVToArray(text_el.value, "\t");
+    answers = {};
+    for (var row of results) {
+      if (row.includes("Name")) {
+        continue;
+      }
+      name = row[row.length - 2];
+      things = row[row.length - 1].split("\n");
+      answers[name] = things;
+    }
+    score();
+  }
+
+  function merge() {
+    var checkboxes = document.getElementsByTagName("input");
+    var checked = [];
+    for (var i = 0; i < checkboxes.length; i++) {
+      if (checkboxes[i].checked) {
+        checked.push(checkboxes[i].value);
+      }
+    }
+    if (checked.length == 0) {
+      alert("Nothing checked!");
+      return;
+    }
+
+    var mergeKey = "merge" + Object.keys(merges).length;
+    for (var value of checked) {
+      merge_lookup[value] = mergeKey;
+    }
+    merges[mergeKey] = { values: checked };
+    score();
+  }
+
+  function unmerge(name) {
+    for (var value of merges[name]["values"]) {
+      delete merge_lookup[value];
+    }
+    delete merges[name];
+    score();
+  }
+</script>
+
+<body>
+  <div id="my_root" class="content">
+    <div class="control-box close-box"><a class="control-box-inner"></a></div>
+    <div class="control-box zoom-box">
+      <div class="control-box-inner"><div class="zoom-box-inner"></div></div>
+    </div>
+    <div class="control-box windowshade-box">
+      <div class="control-box-inner"><div class="windowshade-box-inner"></div></div>
+    </div>
+    <h1 class="title">Mind Meld Scorer</h1>
+    <div class="inner">
+      <ul>
+        <li>Please paste the contents of the Google Form here:</li>
+        <li>
+          <textarea style="width: 90%" onchange="parse()" id="input"></textarea>
+        </li>
+      </ul>
+      <button class="command_button" onclick="parse()">Score</button>
+    </div>
+  </div>
+
+  <div id="answer_section" class="content">
+    <div class="control-box close-box"><a class="control-box-inner"></a></div>
+    <div class="control-box zoom-box">
+      <div class="control-box-inner"><div class="zoom-box-inner"></div></div>
+    </div>
+    <div class="control-box windowshade-box">
+      <div class="control-box-inner"><div class="windowshade-box-inner"></div></div>
+    </div>
+    <h1 class="title">Answers</h1>
+    <div class="inner">
+      <ul>
+        <li><table id="answers"></table></li>
+      </ul>
+      <button class="command_button" onclick="merge()">Merge</button>
+    </div>
+  </div>
+
+  <div id="scores_section" class="content">
+    <div class="control-box close-box"><a class="control-box-inner"></a></div>
+    <div class="control-box zoom-box">
+      <div class="control-box-inner"><div class="zoom-box-inner"></div></div>
+    </div>
+    <div class="control-box windowshade-box">
+      <div class="control-box-inner"><div class="windowshade-box-inner"></div></div>
+    </div>
+    <h1 class="title">Scores</h1>
+    <div class="inner">
+      <ul>
+        <li><table id="scores"></table></li>
+      </ul>
+    </div>
+  </div>
+</body>
