@@ -26,3 +26,40 @@
 #scores tr td {
   padding-bottom: 25px;
 }
+
+#icons {
+  width: 30%;
+  float: left;
+  margin-left: 3%;
+  margin-top: 3%;
+  text-align: center;
+  width: 5%;
+}
+
+#icons div {
+  margin-bottom: 50%;
+}
+
+#icons img {
+  width: 50%;
+  margin-left: 25%;
+  display: block;
+  margin-bottom: 5%;
+}
+
+#icons span {
+  background-color: white;
+}
+
+#instructions {
+  position: absolute;
+  width: 80%;
+  top: 5%;
+  left: 5%;
+  display: none;
+}
+
+#instructions_txt {
+  padding: 30px;
+  background-color: white;
+}

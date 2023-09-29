@@ -278,9 +278,30 @@ C3PO"
     delete merges[name];
     score();
   }
+
+  function toggle() {
+    var el = document.getElementById("instructions");
+    if (el.style.display == "block") {
+      el.style.display = "none";
+    } else {
+      el.style.display = "block";
+    }
+  }
 </script>
 
 <body>
+  <div id="icons">
+    <div class="icon" onclick="toggle()">
+      <img src="doc.png" alt="classic document icon" />
+      <span>README.txt</span>
+    </div>
+    <div class="icon">
+      <a href="https://github.com/DLu/mind_meld/">
+        <img src="compy.png" alt="classic computer icon" />
+        <span>GitHub</span>
+      </a>
+    </div>
+  </div>
   <div id="my_root" class="content">
     <div class="control-box close-box"><a class="control-box-inner"></a></div>
     <div class="control-box zoom-box">
@@ -330,6 +351,59 @@ C3PO"
     <div class="inner">
       <ul>
         <li><table id="scores"></table></li>
+      </ul>
+    </div>
+  </div>
+
+  <div id="instructions" class="content" onclick="toggle()">
+    <div class="control-box close-box"><a class="control-box-inner"></a></div>
+    <div class="control-box zoom-box">
+      <div class="control-box-inner"><div class="zoom-box-inner"></div></div>
+    </div>
+    <div class="control-box windowshade-box">
+      <div class="control-box-inner"><div class="windowshade-box-inner"></div></div>
+    </div>
+    <h1 class="title">README.txt</h1>
+    <div id="instructions_txt" class="inner">
+      <p>
+        Sometimes, when you have a computer science degree, you are cursed: cursed to write a script to automate tedious
+        tasks that are easy for computers. Thus I felt I had to make a score keeper-helper for Mind Meld.
+      </p>
+
+      <h4>General flow</h4>
+      <p>
+        Contestants input their name and answers into a Google Form (with their answers appearing one-per-line). Those
+        values can be copied from the associated spreadsheet, which should look like this. (Name a Robot)
+      </p>
+
+      <pre>
+    Timestamp Name Things (each on their own line)
+7/20/2023 13:40:27 David "R2D2
+C3PO
+WALLE"
+7/20/2023 13:40:44 Elise "C3PO
+WALLE
+BB8"
+7/20/2023 13:41:21 Lizzie "Captain Barnacles
+R2-D2
+C3PO"
+7/20/2023 13:41:21 Maggie "Captain Barnacles
+R2-D2
+C3PO"
+ </pre
+      >
+
+      <p>
+        The scorekeeper pastes the answers from that round into the main text box, and hits the score button. All the
+        answers given are shown on the bottom left. The scores for each player are shown in the bottom right.
+      </p>
+      <ul>
+        <li>If everyone gave one particular answer, that is highlighted in yellow.</li>
+        <li>If players meld with each other, they are given 10 bonus points.</li>
+        <li>
+          But wait, there are points missing for David who said R2D2 without the dash. Not to worry: check the boxes in
+          the Answers box next to R2-D2 and R2D2 and click Meld.
+        </li>
       </ul>
     </div>
   </div>
