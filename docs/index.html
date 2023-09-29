@@ -237,6 +237,9 @@ C3PO"
 
   function parse() {
     var text_el = document.getElementById("input");
+    if (!text_el.value) {
+      return;
+    }
     var results = CSVToArray(text_el.value, "\t");
     answers = {};
     for (var row of results) {
