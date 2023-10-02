@@ -55,13 +55,20 @@ a {
   margin: 100px auto 0;
   border: 1px solid #111;
   background: #ccc;
-  box-shadow: 1px 2px #111, inset 1px 1px 0px 0px #fff, inset -1px -1px 0px 0px #999;
+  box-shadow:
+    1px 2px #111,
+    inset 1px 1px 0px 0px #fff,
+    inset -1px -1px 0px 0px #999;
 }
 .content .inner {
   margin: 2px 4px 4px 4px;
   border: 1px solid #111;
   background-color: #ddd;
-  box-shadow: -1px -1px 0px 0px #999, 1px 1px 0px 0px #fff, inset 1px 1px 0px 0px #fff, inset -1px -1px 0px 0px #999;
+  box-shadow:
+    -1px -1px 0px 0px #999,
+    1px 1px 0px 0px #fff,
+    inset 1px 1px 0px 0px #fff,
+    inset -1px -1px 0px 0px #999;
 }
 .title {
   width: 100%;
@@ -93,7 +100,9 @@ a {
   top: 3px;
   padding: 1px;
   background-color: #222;
-  box-shadow: inset -1px -1px 0px 0px #fff, inset 1px 1px 0px 0px #888;
+  box-shadow:
+    inset -1px -1px 0px 0px #fff,
+    inset 1px 1px 0px 0px #888;
 }
 .close-box.control-box {
   left: 4px;
@@ -104,7 +113,9 @@ a {
   width: 12px;
   background-image: linear-gradient(to bottom right, #999, #aaa, #bbb, #ccc, #ddd, #eee, #fff);
   border: 1px solid #222;
-  box-shadow: inset 1px 1px 0px 0px #ccc, inset -1px -1px 0px 0px #888;
+  box-shadow:
+    inset 1px 1px 0px 0px #ccc,
+    inset -1px -1px 0px 0px #888;
   text-indent: -99999em;
 }
 .control-box-inner:active {
@@ -144,8 +155,12 @@ a {
 .content .command_button:active {
   color: #fff;
   background-color: #666;
-  box-shadow: var(--button-hover-bezel), inset -1px -1px 0px 0px #888, inset -2px -2px 0px 0px #777,
-    inset 1px 1px 0px 0px #444, inset 2px 2px 0px 0px #555;
+  box-shadow:
+    var(--button-hover-bezel),
+    inset -1px -1px 0px 0px #888,
+    inset -2px -2px 0px 0px #777,
+    inset 1px 1px 0px 0px #444,
+    inset 2px 2px 0px 0px #555;
 }
 /* Hide only visually, but have it available for screenreaders & for SEO purposes. See h5bp.com/v */
 .visuallyhidden {
