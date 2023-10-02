@@ -28,6 +28,6 @@ repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     hooks:
       - id: prettier
-    rev: v2.7.1
+    rev: v3.0.3
 ci:
   autoupdate_schedule: quarterly
