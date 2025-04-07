@@ -13,8 +13,8 @@
 }
 
 :root {
-  --button-box-shadow: inset -1px -1px 0px 0px #777, inset -2px -2px 0px 0px #aaa, inset 1px 1px 0px 0px #ddd,
-    inset 2px 2px 0px 0px #fff;
+  --button-box-shadow:
+    inset -1px -1px 0px 0px #777, inset -2px -2px 0px 0px #aaa, inset 1px 1px 0px 0px #ddd, inset 2px 2px 0px 0px #fff;
   --button-hover-bezel: 0 0 0 1px #aaa, 0 0 0 2px #ddd, 0 0 0 3px #000;
 }
 
